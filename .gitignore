@@ -1,0 +1,7 @@
+build/
+.idea/
+.vscode/
+*.o
+*.dSYM/
+scratch
+scratch.cpp
