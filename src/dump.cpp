@@ -5,62 +5,63 @@
 // write this semester (an outer loop over rows, an inner loop over columns).
 #include <iomanip>
 #include <iostream>
+using namespace std;
 
 #include "dump.hpp"
 
 
 // How many bytes we print on one line. Try changing it to 8 and rebuilding.
-const std::size_t BYTES_PER_LINE = 32;
+const size_t BYTES_PER_LINE = 32;
 
 // Is this byte something a terminal can print as a glyph?
 // 0x20 is space, 0x7E is '~'. Everything outside that range we show as '.'.
 static bool is_printable(Byte b) { return b >= 0x20 && b <= 0x7E; }
 
 void dump(const Memory& mem) {
-    // std::hex switches the stream to hexadecimal; setfill/setw pad with zeros
+    // hex switches the stream to hexadecimal; setfill/setw pad with zeros
     // so every number is the same width and the columns line up.
-    for (std::size_t row = 0; row < MEM_SIZE; row += BYTES_PER_LINE) {
+    for (size_t row = 0; row < MEM_SIZE; row += BYTES_PER_LINE) {
 
         // The address column: 0000, 0010, 0020, ...
-        std::cout << std::hex << std::setfill('0') << std::setw(4) << row << "  ";
+        cout << hex << setfill('0') << setw(4) << row << "  ";
         //  0, 16, 32, 48, ....
 
         // The hex column: 16 bytes, two digits each.
-        for (std::size_t col = 0; col < BYTES_PER_LINE; ++col) {
+        for (size_t col = 0; col < BYTES_PER_LINE; ++col) {
             Byte b = mem.data[row + col];
-            std::cout << std::setw(2) << static_cast<int>(b) << ' ';
+            cout << setw(2) << static_cast<int>(b) << ' ';
         }
 
-        std::cout << " |";
+        cout << " |";
 
         // The ASCII gutter.
-        for (std::size_t col = 0; col < BYTES_PER_LINE; ++col) {
+        for (size_t col = 0; col < BYTES_PER_LINE; ++col) {
             Byte b = mem.data[row + col];
             // TODO(lab-01, M2): when the byte IS printable, print the byte
             //                   itself instead of the dot. One token changes.
-            //                   Hint: a Byte sent to std::cout prints as a
+            //                   Hint: a Byte sent to cout prints as a
             //                   character already - that is the whole joke of
             //                   Lab 1. Right now every byte looks unprintable.
             if (is_printable(b)) {
-                std::cout << b;
+                cout << b;
             } else {
-                std::cout << '.';
+                cout << '.';
             }
         }
 
-        std::cout << "|\n";
+        cout << "|\n";
     }
 
     // Put the stream back to decimal, or every number you print later is hex.
-    std::cout << std::dec << std::setfill(' ');
+    cout << dec << setfill(' ');
 }
 
 
 
 
 
-std::string to_bin(long long n, int bits = 8) {
-    std::string res = "0b";
+string to_bin(long long n, int bits) {
+    string res = "0b";
     for (int i = bits - 1; i >= 0; --i) {
         //  Transform data with binary operations
         res += (n & (1LL << i)) ? '1' : '0';
@@ -82,11 +83,11 @@ void show_byte(Byte b) {
         is_printable(b) ? b : '.';
 
     //  DEC
-    std::cout << number << "  ";
+    cout << number << "  ";
     //  HEX
-    std::cout << "0x" << std::hex << number << "  " << std::dec;
+    cout << "0x" << hex << number << "  " << dec;
     //  BIN
-    std::cout << to_bin(number) << "  ";
+    cout << to_bin(number) << "  ";
     //  CHAR
-    std::cout << "'" << character << "'" << "\n";
+    cout << "'" << character << "'" << "\n";
 }

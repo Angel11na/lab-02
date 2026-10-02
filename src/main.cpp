@@ -18,6 +18,7 @@ static void print_help();
 void cmd_get(Memory& mem, istringstream& words);
 void cmd_set(Memory& mem, istringstream& words);
 void cmd_inc(Memory& mem, istringstream& words);
+void cmd_reg(CPU& cpu, istringstream& words);
 
 int main() {
     Memory mem; // 4096 bytes
@@ -59,7 +60,12 @@ int main() {
             cmd_inc(mem, words);
         } else if (cmd == "reg") {
             cmd_reg(cpu, words);
-        } else {
+        } else if (cmd == "regs") {
+            dump_regs(cpu);
+        } else if(cmd == "step") {
+            step(cpu);
+        }
+        else {
             cout << "unknown command: " << cmd << " (try `help`)\n";
         }
     }
@@ -80,12 +86,15 @@ static bool parse_number(const string& word, long& out) {
 
 static void print_help() {
     cout << "commands:\n"
-         << "  dump              print all " << MEM_SIZE << " bytes\n"
-         << "  get <addr>        show one byte four ways\n"
-         << "  set <addr> <val>  write one byte (dec or 0x hex)\n"
-         << "  inc <addr>        increment value and overwrite\n"
-         << "  help              this list\n"
-         << "  quit              leave\n";
+         << "  dump                     print all " << MEM_SIZE << " bytes\n"
+         << "  get <addr>               show one byte four ways\n"
+         << "  set <addr> <val>         write one byte (dec or 0x hex)\n"
+         << "  inc <addr>               increment value and overwrite\n"
+         << "  reg <a|b> <0..255>       set CPU register <a|b> value\n"
+         << "  regs                     show current CPU state\n"
+         << "  step                     perform one CPU instruction\n"
+         << "  help                     this list\n"
+         << "  quit                     leave\n";
 }
 
 //  =============================================================================
@@ -138,13 +147,17 @@ void cmd_inc(Memory& mem, istringstream& words) {
 void cmd_reg(CPU& cpu, istringstream& words) {
     string r, v;
     long value = 0;
-    if (!(words >> r) || !(words >> v) || !parse_number(v, value) || value < 0 || value > 255) {
+    
+    if (
+        !(words >> r) || !(words >> v) ||   //  чи достатньо елементів у команді?
+        !(r == "a" || r == "b") ||          //  r є "а" або "b"?
+        !parse_number(v, value) ||          //  чи v є цілим числом?
+        value < 0 || value > 255            //  чи v в межах 0-255
+    ) {
         cout << "usage: reg <a|b> <0..255>\n";
-    } else if (r == "a") {
-        cpu.a = (Byte)value;
-    } else if (r == "b") {
-        cpu.b = (Byte)value;
-    } else {
-        cout << "unknown register: " << r << '\n';
+        return;
     }
+    
+    cpu.a = (r == "a") ? (Byte)value : cpu.a;
+    cpu.b = (r == "b") ? (Byte)value : cpu.b;
 }

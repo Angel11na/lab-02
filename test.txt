@@ -1,0 +1,4 @@
+reg a 10
+reg b 20
+set 0 16
+step

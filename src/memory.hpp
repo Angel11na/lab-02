@@ -21,7 +21,7 @@ struct Memory {
     // Experiment (Lab 1, M4): delete the `{}`, rebuild, `dump`. What appears?
     // Put the `{}` back afterwards — reading uninitialized memory is UB,
     // and this course does not ship UB.
-    Byte data[MEM_SIZE];
+    Byte data[MEM_SIZE]{};
 };
 
 // Read the byte at `addr`. If `addr` is outside the box, return 0.

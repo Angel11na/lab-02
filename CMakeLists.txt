@@ -6,7 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(ember
+    
+    #   --- MAIN DECLARATIONS
     src/main.cpp
+    #src/test_alu.cpp
+    #   ----------------------
+    
+    
     src/memory.cpp
     src/dump.cpp
     src/cpu.cpp
